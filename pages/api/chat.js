@@ -1,5 +1,5 @@
 // pages/api/chat.js
-// This runs on the server — your API key never touches the browser
+// This runs on the server â€” your API key never touches the browser
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
