@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 
@@ -351,7 +352,7 @@ export default function Home() {
             style={{ ...S.textIn, borderColor: crisisMode ? "#e05555" : "#222" }}
             enterKeyHint="send" autoComplete="off" />
           <button onClick={() => send(inp)} disabled={!inp.trim() || busy}
-            style={{ ...S.sendBtn, background: crisisMode ? "#e05555" : G, opacity: inp.trim() && !busy ? 1 : 0.4 }}>></button>
+            style={{ ...S.sendBtn, background: crisisMode ? "#e05555" : G, opacity: inp.trim() && !busy ? 1 : 0.4 }}>Send</button>
         </div>
       </div>
     </Page>
