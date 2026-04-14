@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 
@@ -117,7 +116,7 @@ export default function Home() {
   const [sd, setSd]             = useState("");
   const [scf, setScf]           = useState("");
   const [sg, setSg]             = useState("");
-  const [sp, setSp]             = useState("");
+  const [sp, setSp]             = useState([]);
   const [sct, setSct]           = useState("09:00");
   const [ji, setJi]             = useState("");
   const [hydrated, setHydrated] = useState(false);
@@ -247,7 +246,7 @@ export default function Home() {
     setSD(d); sv("m_start", d);
     setCF(scf); sv("m_cf", scf);
     setGoals(sg); sv("m_goals", sg);
-    setProg(sp); sv("m_prog", sp);
+    const progStr = Array.isArray(sp) ? sp.join(", ") : sp; setProg(progStr); sv("m_prog", progStr);
     setCIT(sct); sv("m_cit", sct);
     setScreen("home");
   }
@@ -257,7 +256,7 @@ export default function Home() {
       .forEach((k) => { try { localStorage.removeItem(k); } catch {} });
     setSD(null); setCF(""); setGoals(""); setProg(""); setCI(0); setCrav(0);
     setJ([]); setMemory([]); setNO(false); setMsgs([]); setStTxt(null); setCrisis(false);
-    setStep(0); setSd(""); setScf(""); setSg(""); setSp(""); setScreen("home");
+    setStep(0); setSd(""); setScf(""); setSg(""); setSp([]); setScreen("home");
   }
 
   if (!hydrated) return null;
@@ -290,16 +289,25 @@ export default function Home() {
           </>}
           {step === 3 && <>
             <p style={S.q}>Do you have a support system?</p>
-            <p style={S.qs}>Helps Mara speak your language.</p>
+            <p style={S.qs}>Select all that apply. Helps Mara speak your language.</p>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {PROGRAMS.map((prog) => (
-                <button key={prog} onClick={() => setSp(prog)}
-                  style={{ ...S.optBtn, borderColor: sp === prog ? G : "#2a2a2a", color: sp === prog ? "#e8e0d5" : "#7a7066" }}>
+              {PROGRAMS.map((prog) => {
+                const selected = Array.isArray(sp) ? sp.includes(prog) : sp === prog;
+                return (
+                  <button key={prog} onClick={() => {
+                    if (Array.isArray(sp)) {
+                      setSp(selected ? sp.filter(p => p !== prog) : [...sp, prog]);
+                    } else {
+                      setSp([prog]);
+                    }
+                  }}
+                  style={{ ...S.optBtn, borderColor: selected ? G : "#2a2a2a", color: selected ? "#e8e0d5" : "#7a7066" }}>
                   {prog}
                 </button>
-              ))}
+                );
+              })}
             </div>
-            <Row style={{ marginTop: 8 }}><GBtn onClick={() => setStep(2)}>Back</GBtn><Btn onClick={() => sp && setStep(4)} dim={!sp} style={{ flex: 1 }}>Next</Btn></Row>
+            <Row style={{ marginTop: 8 }}><GBtn onClick={() => setStep(2)}>Back</GBtn><Btn onClick={() => sp && setStep(4)} dim={!(Array.isArray(sp) ? sp.length > 0 : sp)} style={{ flex: 1 }}>Next</Btn></Row>
           </>}
           {step === 4 && <>
             <p style={S.q}>When should Mara check in?</p>
