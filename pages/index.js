@@ -236,7 +236,29 @@ export default function Home() {
     const p = await Notification.requestPermission();
     if (p === "granted") {
       setNO(true); sv("m_notif", true);
-      new Notification("Mara", { body: `Daily check-in set for ${checkInTime}. I'll be here.` });
+      
+      // Register service worker and schedule daily notification
+      if ("serviceWorker" in navigator) {
+        try {
+          const reg = await navigator.serviceWorker.ready;
+          // Send schedule message to service worker
+          if (reg.active) {
+            reg.active.postMessage({
+              type: "SCHEDULE_NOTIFICATION",
+              time: checkInTime,
+              title: "Mara",
+              body: "Hey. How are you doing today?"
+            });
+          }
+        } catch (err) {
+          console.log("SW scheduling failed:", err);
+        }
+      }
+      
+      // Show immediate confirmation
+      new Notification("Mara", { 
+        body: `Daily check-in set for ${checkInTime}. I will be here.`
+      });
     } else alert("Permission denied -- enable in browser settings.");
   }
 
